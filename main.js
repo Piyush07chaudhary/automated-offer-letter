@@ -46,34 +46,37 @@ function displayExcelData(data) {
 }
 
 // Function to handle Roll Out Emails button click
+
+
+// Function to handle Roll Out Emails button click
 document.getElementById('rollOutBtn').addEventListener('click', function() {
     var table = document.getElementById('excelTable');
     var rows = table.rows;
     var payload = [];
+    var emails = []; // Store email addresses to send emails later
 
     // Start from 1 to skip header row
     for (var i = 1; i < rows.length; i++) {
         var name = rows[i].cells[0].textContent;
         var email = rows[i].cells[1].textContent;
         var selected = rows[i].cells[2].textContent.trim().toLowerCase() === 'yes' ? 1 : 0;
-        payload.push({ name: name, email: email, status: selected });
+        payload.push({ Name: name, Email: email, status: selected });
+        emails.push(email);
     }
-    debugger;
+
     // Call the API with the payload
-    fetch('https://abcdefgh.com/upload', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Response:', data);
-        alert('Emails rolled out successfully!');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while rolling out emails.');
-    });
+    sendEmails(emails);
 });
+
+// Function to send emails using EmailJS
+function sendEmails(emails) {
+    emails.forEach(email => {
+        // Replace 'YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', and 'YOUR_USER_ID' with your actual EmailJS credentials
+        emailjs.send('service_4hev5xf', 'template_v2be9xf', { to_email: email }, 'ZECysApntV6fnlXNL')
+        .then(function(response) {
+            console.log('Email sent to ' + email, response);
+        }, function(error) {
+            console.error('Error sending email to ' + email, error);
+        });
+    });
+}
